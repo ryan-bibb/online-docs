@@ -15,7 +15,7 @@ import {
 
 const navItems = [
   { title: 'Home', icon: Home, href: '/home' },
-  { title: 'All Documents', icon: FileText, href: '/' },
+  { title: 'All Documents', icon: FileText, href: '/docs' },
   { title: 'Starred', icon: Star, href: '/docs/starred' },
 ]
 
