@@ -4,20 +4,23 @@ import { prisma } from '@/lib/prisma'
 import { Document, User } from '@/lib/generated/prisma/client'
 import { successResult, errorResult } from '@/lib/utils/action-result'
 
-export async function createDoc({
+export async function createDocument({
   title,
   content,
   userId,
+  pinned,
 }: {
   title: string
   content: string
   userId: User['user_id']
+  pinned: boolean
 }) {
   const document = await prisma.document.create({
     data: {
       title,
       content,
       creatorId: userId,
+      isPinned: pinned,
     },
   })
 
