@@ -12,7 +12,7 @@ import Tiptap from '@/components/tiptap'
 export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
   const { docId } = await params
   const document = await prisma.document.findUnique({
-    where: { doc_id: docId },
+    where: { documentId: docId },
   })
 
   if (!document) return <div>Page Not Found</div>
@@ -28,7 +28,7 @@ export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
         </CardHeader>
         <CardContent>
           <div className="border rounded-sm">
-            <Tiptap docId={document.doc_id} content={document.content} />
+            <Tiptap docId={document.documentId} content={document.content} />
           </div>
         </CardContent>
       </Card>

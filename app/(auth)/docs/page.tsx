@@ -13,11 +13,11 @@ export default async function Home() {
       </div>
       <div className="flex flex-row flex-wrap gap-5 p-5 w-full border-y">
         {recentDocuments.map((document) => (
-          <div key={document.doc_id}>
+          <div key={document.documentId}>
             <DocCard
               title={document.title}
               date={document.updatedAt}
-              docId={document.doc_id}
+              docId={document.documentId}
             />
           </div>
         ))}

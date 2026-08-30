@@ -8,7 +8,7 @@ import { Star } from 'lucide-react'
 import { createDocument } from '@/app/(auth)/docs/actions'
 import { useRouter } from 'next/navigation'
 
-// TODO: once 'const user = auth()' is wired up swap hardcoded userId with user.user_id
+// TODO: once 'const user = auth()' is wired up swap hardcoded userId with user.userId
 export default function NewDocForm() {
   const [title, setTitle] = useState('')
   const [pinned, setPinned] = useState(false)
@@ -54,7 +54,7 @@ export default function NewDocForm() {
                 })
 
                 if (result.success === true)
-                  router.push(`/docs/${result.data.doc_id}`)
+                  router.push(`/docs/${result.data.documentId}`)
               }}
             >
               Save

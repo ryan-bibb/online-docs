@@ -10,7 +10,7 @@ export default function StarButton({
   docId,
   defaultPinn,
 }: {
-  docId: Document['doc_id']
+  docId: Document['documentId']
   defaultPinn: boolean
 }) {
   const [pinned, setPinned] = useState(defaultPinn)

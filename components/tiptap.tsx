@@ -11,7 +11,7 @@ const Tiptap = ({
   docId,
   content,
 }: {
-  docId: Document['doc_id']
+  docId: Document['documentId']
   content: string
 }) => {
   const [currentContent, setCurrentContent] = useState(content)
