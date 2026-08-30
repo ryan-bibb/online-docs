@@ -1,4 +1,4 @@
-import { FileText, Home, Settings, Star } from 'lucide-react'
+import { FileText, Home, LogOut, Settings, Star } from 'lucide-react'
 import Link from 'next/link'
 import {
   Sidebar,
@@ -12,6 +12,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
+import { logout } from '@/lib/actions/auth'
+import { User } from '@/lib/generated/prisma/client'
 
 const navItems = [
   { title: 'Home', icon: Home, href: '/home' },
@@ -20,7 +22,7 @@ const navItems = [
 ]
 
 // TODO: maybe dont make this retractable. It would make styling in other components easier
-export function AppSidebar() {
+export function AppSidebar({ user }: { user: Pick<User, 'userName'> | null }) {
   return (
     <Sidebar>
       <SidebarHeader>RLink Docs</SidebarHeader>
@@ -43,11 +45,26 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
+          {user && (
+            <SidebarMenuItem>
+              <SidebarMenuButton disabled>
+                <span>{user.userName}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
           <SidebarMenuItem>
             <SidebarMenuButton>
               <Settings />
               <span>Settings</span>
             </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <form action={logout} className="w-full">
+              <SidebarMenuButton render={<button type="submit" />}>
+                <LogOut />
+                <span>Sign Out</span>
+              </SidebarMenuButton>
+            </form>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
