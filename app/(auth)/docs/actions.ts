@@ -1,21 +1,20 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { Document } from '@/lib/generated/prisma/client'
+import { Document, User } from '@/lib/generated/prisma/client'
 import { successResult, errorResult } from '@/lib/utils/action-result'
-import { verifySession } from '@/lib/auth'
 
 export async function createDocument({
   title,
   content,
+  userId,
   pinned,
 }: {
   title: string
   content: string
+  userId: User['userId']
   pinned: boolean
 }) {
-  const { userId } = await verifySession()
-
   const document = await prisma.document.create({
     data: {
       title,
