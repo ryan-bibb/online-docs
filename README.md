@@ -6,6 +6,8 @@ I was using Google Docs and got tired of it so I'm making my own
 
 - what should I do with actions success returns? Toasts?
 - migrate HomePage and StarredPage into reusable component
+- profile/settings page
+- friends
 
 ## Features Ideas
 
