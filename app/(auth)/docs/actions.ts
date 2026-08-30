@@ -12,7 +12,7 @@ export async function createDocument({
 }: {
   title: string
   content: string
-  userId: User['user_id']
+  userId: User['userId']
   pinned: boolean
 }) {
   const document = await prisma.document.create({
@@ -32,11 +32,11 @@ export async function saveDocumentContent({
   docId,
   content,
 }: {
-  docId: Document['doc_id']
+  docId: Document['documentId']
   content: string
 }) {
   const document = await prisma.document.update({
-    where: { doc_id: docId },
+    where: { documentId: docId },
     data: { content },
   })
 
@@ -48,11 +48,11 @@ export async function togglePinned({
   docId,
   pinned,
 }: {
-  docId: Document['doc_id']
+  docId: Document['documentId']
   pinned: boolean
 }) {
   const document = await prisma.document.update({
-    where: { doc_id: docId },
+    where: { documentId: docId },
     data: { isPinned: pinned },
   })
 

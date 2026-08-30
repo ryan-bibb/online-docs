@@ -5,14 +5,15 @@ import { prisma } from '@/lib/prisma'
 
 // User One
 const userOne = await prisma.user.upsert({
-  where: { user_name: 'ryanbibb34' },
+  where: { userName: 'ryanbibb34' },
   update: {
-    password_hash: 'password',
+    passwordHash: 'password',
     bio: 'Hello, my name is Ryan Bibb and Im a dev',
   },
   create: {
-    user_name: 'ryanbibb34',
-    password_hash: 'password',
+    userName: 'ryanbibb34',
+    passwordHash: 'password',
+    email: 'ryanbibb34@example.com',
     bio: 'Hello, my name is Ryan Bibb and Im a dev',
   },
 })
@@ -20,15 +21,16 @@ const userOne = await prisma.user.upsert({
 // User Two
 const userTwo = await prisma.user.upsert({
   where: {
-    user_name: 'RonSwanson',
+    userName: 'RonSwanson',
   },
   update: {
-    password_hash: 'password',
+    passwordHash: 'password',
     bio: 'I am a generation hacker',
   },
   create: {
-    user_name: 'RonSwanson',
-    password_hash: 'password',
+    userName: 'RonSwanson',
+    passwordHash: 'password',
+    email: 'ronswanson@example.com',
     bio: 'I am a generation hacker',
   },
 })
@@ -36,15 +38,16 @@ const userTwo = await prisma.user.upsert({
 // User Three
 const userThree = await prisma.user.upsert({
   where: {
-    user_name: 'echos-100',
+    userName: 'echos-100',
   },
   update: {
-    password_hash: 'password',
+    passwordHash: 'password',
     bio: 'Im an alter ego (^.^)',
   },
   create: {
-    user_name: 'echos-100',
-    password_hash: 'password',
+    userName: 'echos-100',
+    passwordHash: 'password',
+    email: 'echos100@example.com',
     bio: 'Im an alter ego (^.^)',
   },
 })
@@ -57,7 +60,7 @@ await prisma.document.create({
     title: 'Short Story #3',
     content:
       'And then there was one...one left all alone. He stared up at the stars...',
-    creatorId: userOne.user_id,
+    creatorId: userOne.userId,
   },
 })
 
@@ -66,7 +69,7 @@ await prisma.document.create({
   data: {
     title: 'Personal Thoughts',
     content: 'Why is Python so slow and C++ so fast? Does anyone really know?',
-    creatorId: userOne.user_id,
+    creatorId: userOne.userId,
   },
 })
 
@@ -76,7 +79,7 @@ await prisma.document.create({
     title: 'Reading List',
     content:
       '- Designing Data Intensive Applications - Eloquent Javascript - Python For Beginners',
-    creatorId: userOne.user_id,
+    creatorId: userOne.userId,
   },
 })
 
@@ -85,7 +88,7 @@ await prisma.document.create({
   data: {
     title: 'Movie Reviews',
     content: 'Interstellar is really good.',
-    creatorId: userOne.user_id,
+    creatorId: userOne.userId,
   },
 })
 
@@ -94,6 +97,6 @@ await prisma.document.create({
   data: {
     title: 'Book #1 Draft',
     content: 'Chapter 1: The Great Awakenings',
-    creatorId: userOne.user_id,
+    creatorId: userOne.userId,
   },
 })

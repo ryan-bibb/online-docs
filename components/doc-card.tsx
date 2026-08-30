@@ -12,7 +12,7 @@ export default function DocCard({
 }: {
   title: string
   date: Date
-  docId?: Document['doc_id']
+  docId?: Document['documentId']
 }) {
   return (
     <Link href={docId ? `/docs/${docId}` : '/docs/new'}>
