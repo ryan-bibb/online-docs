@@ -53,7 +53,7 @@ export function AppSidebar({ user }: { user: Pick<User, 'userName'> | null }) {
             </SidebarMenuItem>
           )}
           <SidebarMenuItem>
-            <SidebarMenuButton>
+            <SidebarMenuButton render={<Link href="/settings" />}>
               <Settings />
               <span>Settings</span>
             </SidebarMenuButton>
