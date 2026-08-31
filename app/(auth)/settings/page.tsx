@@ -15,7 +15,7 @@ export default async function Settings() {
           <SettingsPage
             userId={user.userId}
             userName={user.userName}
-            email="ryanbibb34@gmail.com"
+            email={user.email}
             bio={user.bio}
           />
         </CardContent>

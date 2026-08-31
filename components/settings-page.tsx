@@ -1,15 +1,29 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import {
   updateUserName,
   updateEmail,
   updateBio,
 } from '@/app/(auth)/docs/actions'
-import { Card, CardHeader, CardContent } from './ui/card'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from './ui/card'
 import { Button } from '@/components/ui/button'
-import { User } from '@prisma/client'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
+import { User } from '@/lib/generated/prisma/client'
 
 export function SettingsPage({
   userId,
@@ -22,61 +36,172 @@ export function SettingsPage({
   bio: string
   email: string
 }) {
+  const router = useRouter()
+
   const [editUserName, setEditUserName] = useState(false)
+  const [userNameDraft, setUserNameDraft] = useState(userName)
+  const [savingUserName, setSavingUserName] = useState(false)
+
   const [editEmail, setEditEmail] = useState(false)
+  const [emailDraft, setEmailDraft] = useState(email)
+  const [savingEmail, setSavingEmail] = useState(false)
+
   const [editBio, setEditBio] = useState(false)
+  const [bioDraft, setBioDraft] = useState(bio)
+  const [savingBio, setSavingBio] = useState(false)
+
+  async function saveUserName() {
+    setSavingUserName(true)
+    const result = await updateUserName({ userId, userName: userNameDraft })
+    setSavingUserName(false)
+    if (result.success) {
+      setEditUserName(false)
+      router.refresh()
+    }
+  }
+
+  async function saveEmail() {
+    setSavingEmail(true)
+    const result = await updateEmail({ userId, email: emailDraft })
+    setSavingEmail(false)
+    if (result.success) {
+      setEditEmail(false)
+      router.refresh()
+    }
+  }
+
+  async function saveBio() {
+    setSavingBio(true)
+    const result = await updateBio({ userId, bio: bioDraft })
+    setSavingBio(false)
+    if (result.success) {
+      setEditBio(false)
+      router.refresh()
+    }
+  }
 
   return (
-    <div>
+    <div className="mx-auto w-full max-w-lg py-10">
       <Card>
-        <CardContent className="flex-col gap-3">
-          <div className="flex gap-3">
-            {userName}
-            <Button onClick={() => setEditUserName(true)}>
-              Update username
+        <CardHeader>
+          <CardTitle>Settings</CardTitle>
+          <CardDescription>Manage your account details.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col divide-y divide-border">
+          {/* USERNAME SECTION */}
+          <div className="flex items-center justify-between gap-3 py-4 first:pt-0 last:pb-0">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-medium text-muted-foreground">
+                Username
+              </span>
+              <span className="text-sm">{userName}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setUserNameDraft(userName)
+                setEditUserName(true)
+              }}
+            >
+              Update
             </Button>
-            {editUserName && (
+          </div>
+          <Dialog open={editUserName} onOpenChange={setEditUserName}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Update username</DialogTitle>
+              </DialogHeader>
               <Input
-                type="test"
+                value={userNameDraft}
+                onChange={(e) => setUserNameDraft(e.target.value)}
                 placeholder={userName}
-                value={userName}
-                onChange={(e) => {
-                  updateUserName({ userId, userName: e.target.value })
-                  setEditUserName(false)
-                }}
+                autoFocus
               />
-            )}
+              <DialogFooter showCloseButton>
+                <Button disabled={savingUserName} onClick={saveUserName}>
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* EMAIL SECTION */}
+          <div className="flex items-center justify-between gap-3 py-4 first:pt-0 last:pb-0">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-medium text-muted-foreground">
+                Email
+              </span>
+              <span className="text-sm">{email}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setEmailDraft(email)
+                setEditEmail(true)
+              }}
+            >
+              Update
+            </Button>
           </div>
-          <div className="flex gap-3">
-            {email}
-            <Button onClick={() => setEditEmail(true)}>Update Email</Button>
-            {editEmail && (
+          <Dialog open={editEmail} onOpenChange={setEditEmail}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Update email</DialogTitle>
+              </DialogHeader>
               <Input
-                type="text"
+                type="email"
+                value={emailDraft}
+                onChange={(e) => setEmailDraft(e.target.value)}
                 placeholder={email}
-                value={email}
-                onChange={(e) => {
-                  updateEmail({ userId, email: e.target.value })
-                  setEditEmail(false)
-                }}
+                autoFocus
               />
-            )}
+              <DialogFooter showCloseButton>
+                <Button disabled={savingEmail} onClick={saveEmail}>
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* BIO SECTION */}
+          <div className="flex items-center justify-between gap-3 py-4 first:pt-0 last:pb-0">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs font-medium text-muted-foreground">
+                Bio
+              </span>
+              <span className="text-sm">{bio}</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setBioDraft(bio)
+                setEditBio(true)
+              }}
+            >
+              Update
+            </Button>
           </div>
-          <div className="flex gap-3">
-            {bio}
-            <Button onClick={() => setEditBio(true)}>Update Bio</Button>
-            {editBio && (
+          <Dialog open={editBio} onOpenChange={setEditBio}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Update bio</DialogTitle>
+              </DialogHeader>
               <Input
-                type="text"
+                value={bioDraft}
+                onChange={(e) => setBioDraft(e.target.value)}
                 placeholder={bio}
-                value={bio}
-                onChange={(e) => {
-                  updateBio({ userId, bio: e.target.value })
-                  setEditBio(false)
-                }}
+                autoFocus
               />
-            )}
-          </div>
+              <DialogFooter showCloseButton>
+                <Button disabled={savingBio} onClick={saveBio}>
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </CardContent>
       </Card>
     </div>
