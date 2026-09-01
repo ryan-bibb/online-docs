@@ -8,7 +8,7 @@ export default async function InvitesPage() {
   if (!user) return null
 
   const invites = await prisma.invite.findMany({
-    where: { userId: user.userId },
+    where: { userId: user.userId, permission: { in: ['READ', 'WRITE'] } },
   })
 
   const documents = await prisma.document.findMany({
