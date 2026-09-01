@@ -21,7 +21,7 @@ export default async function DocCard({
 
   return (
     <Link href={docId ? `/docs/${docId}` : '/docs/new'}>
-      <Card className="w-50 h-68 border transition-all duration-200 ease-out hover:-translate-y-1 hover:translate-x-1 hover:border-foreground/40 hover:ring-foreground/40">
+      <Card className="w-50 h-70 border transition-all duration-200 ease-out hover:-translate-y-1 hover:translate-x-1 hover:border-foreground/40 hover:ring-foreground/40">
         <CardContent>
           <Image
             src="/images/doc-template-img.jpg"

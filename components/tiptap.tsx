@@ -39,6 +39,7 @@ const Tiptap = ({
     })
   }
 
+  // TODO: wire up permissions NONE, READ, and WRITE
   return (
     <div className="flex-col gap-3">
       <Button onClick={handleSave} disabled={isPending}>

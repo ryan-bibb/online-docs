@@ -17,11 +17,11 @@ export default async function InvitesPage() {
     },
   })
 
-  if (documents.length === 0)
-    return <div>No documents have been shared with you</div>
-
   return (
     <div className="flex flex-row flex-wrap gap-5 p-5 w-full border-y">
+      {documents.length === 0 && (
+        <div>There are currently no documents shared with you</div>
+      )}
       {documents.map((document) => (
         <div key={document.documentId}>
           <DocCard
