@@ -24,6 +24,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { User } from '@/lib/generated/prisma/client'
+import { ThemeSwitcher } from '@/components/theme-switcher'
 
 export function SettingsPage({
   userId,
@@ -208,6 +209,14 @@ export function SettingsPage({
               </form>
             </DialogContent>
           </Dialog>
+
+          {/* APPEARANCE SECTION */}
+          <div className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0">
+            <span className="text-xs font-medium text-muted-foreground">
+              Appearance
+            </span>
+            <ThemeSwitcher />
+          </div>
         </CardContent>
       </Card>
     </div>

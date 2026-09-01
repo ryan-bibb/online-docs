@@ -25,7 +25,6 @@ const navItems = [
   { title: 'Invites', icon: UserPlus, href: '/docs/invites' },
 ]
 
-// TODO: maybe dont make this retractable. It would make styling in other components easier
 export function AppSidebar({ user }: { user: Pick<User, 'userName'> | null }) {
   const pathname = usePathname()
 
