@@ -193,8 +193,6 @@ export async function getDocumentOwner({
 
 // INVITE SECTION
 
-// TODO: fix these functiosn
-
 export async function getPermission({
   userId,
   documentId,
