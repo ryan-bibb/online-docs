@@ -100,6 +100,14 @@ function SidebarProvider({
         event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
         (event.metaKey || event.ctrlKey)
       ) {
+        const target = event.target as HTMLElement | null
+        const isEditable =
+          target?.closest('input, textarea, [contenteditable="true"], .ProseMirror') !== null
+
+        if (isEditable) {
+          return
+        }
+
         event.preventDefault()
         toggleSidebar()
       }
