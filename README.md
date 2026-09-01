@@ -21,3 +21,8 @@ I was using Google Docs and got tired of it so I'm making my own
 - friends/profile
   - allow users to add friends (keep count)
   - users have public profile with username bio and bio pic, etc
+
+- backup email
+  - supabase does not allow backups on free tier
+  - user selects timing options daily / weekly etc when they want to be email a backup of their current docs
+  - every timeframe automate putting current docs in a zip file and email to the user
