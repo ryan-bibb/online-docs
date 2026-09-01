@@ -28,7 +28,7 @@ export default function StarButton({
         <Star
           className={
             pinned === true
-              ? 'fill-yellow-400 text-yellow-400'
+              ? 'fill-primary text-primary'
               : 'text-muted-foreground'
           }
         />
