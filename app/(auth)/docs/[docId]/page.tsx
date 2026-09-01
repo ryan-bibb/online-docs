@@ -12,6 +12,7 @@ import Tiptap from '@/components/tiptap'
 import InviteModal from '@/components/invite-modal'
 import { getCurrentUser } from '@/lib/auth'
 import { getFullDateAndTime } from '@/lib/utils/date'
+import DocTitleInput from '@/components/doc-title-input'
 
 export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
   const { docId } = await params
@@ -42,7 +43,13 @@ export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
     <div className="flex-1 p-4 md:p-6">
       <Card className="mx-auto h-full w-full max-w-4xl">
         <CardHeader className="border-b">
-          <CardTitle className="text-xl">{document.title}</CardTitle>
+          <CardTitle className="text-xl">
+            <DocTitleInput
+              docId={document.documentId}
+              title={document.title}
+              canWrite={canWrite}
+            />
+          </CardTitle>
           <CardDescription>
             Last edited {getFullDateAndTime(document.updatedAt)}
           </CardDescription>

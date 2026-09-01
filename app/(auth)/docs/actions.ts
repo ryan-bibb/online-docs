@@ -137,6 +137,28 @@ export async function saveDocumentContent({
   return successResult({ message: 'Document saved', data: document })
 }
 
+export async function updateDocumentTitle({
+  docId,
+  title,
+}: {
+  docId: Document['documentId']
+  title: string
+}) {
+  const session = await verifySession()
+  if (!(await canWriteDocument(session.userId, docId)))
+    return errorResult({
+      message: 'You do not have write access to this document',
+    })
+
+  const document = await prisma.document.update({
+    where: { documentId: docId },
+    data: { title },
+  })
+
+  if (!document) return errorResult({ message: 'Error updating title' })
+  return successResult({ message: 'Title updated', data: document })
+}
+
 export async function togglePinned({
   docId,
   pinned,
