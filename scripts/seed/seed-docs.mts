@@ -1,18 +1,37 @@
 import 'dotenv/config'
+import { randomBytes, scrypt } from 'crypto'
+import { promisify } from 'util'
 import { prisma } from '@/lib/prisma'
 
+const scryptAsync = promisify(scrypt)
+const KEY_LENGTH = 64
+
+async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16).toString('hex')
+  const derivedKey = (await scryptAsync(password, salt, KEY_LENGTH)) as Buffer
+  return `${salt}:${derivedKey.toString('hex')}`
+}
+
+// RESET
+
+await prisma.invite.deleteMany()
+await prisma.document.deleteMany()
+await prisma.user.deleteMany()
+
 // USER SEEDS
+
+const seedPasswordHash = await hashPassword('password')
 
 // User One
 const userOne = await prisma.user.upsert({
   where: { userName: 'ryanbibb34' },
   update: {
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     bio: 'Hello, my name is Ryan Bibb and Im a dev',
   },
   create: {
     userName: 'ryanbibb34',
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     email: 'ryanbibb34@example.com',
     bio: 'Hello, my name is Ryan Bibb and Im a dev',
   },
@@ -24,12 +43,12 @@ const userTwo = await prisma.user.upsert({
     userName: 'RonSwanson',
   },
   update: {
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     bio: 'I am a generation hacker',
   },
   create: {
     userName: 'RonSwanson',
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     email: 'ronswanson@example.com',
     bio: 'I am a generation hacker',
   },
@@ -41,12 +60,12 @@ const userThree = await prisma.user.upsert({
     userName: 'echos-100',
   },
   update: {
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     bio: 'Im an alter ego (^.^)',
   },
   create: {
     userName: 'echos-100',
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     email: 'echos100@example.com',
     bio: 'Im an alter ego (^.^)',
   },
@@ -105,7 +124,15 @@ const testDoc = await prisma.document.create({
   data: {
     title: 'TEST DOC',
     content: 'THIS IS A TEST DOC FOR INVITES',
-    creatorId: userOne.userId,
+    creatorId: userTwo.userId,
+  },
+})
+
+const testDocTwo = await prisma.document.create({
+  data: {
+    title: 'TEST DOC 2',
+    content: 'THIS IS A SECOND TEST DOC FOR INVITES',
+    creatorId: userThree.userId,
   },
 })
 
@@ -114,13 +141,17 @@ const testDoc = await prisma.document.create({
 // RonSwanson has no access to Short Story #3
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userTwo.userId, documentId: documentOne.documentId },
+    userId_documentId: {
+      userId: userTwo.userId,
+      documentId: documentOne.documentId,
+    },
   },
-  update: { permission: 'NONE' },
+  update: { permission: 'NONE', invitedById: userOne.userId },
   create: {
     permission: 'NONE',
     userId: userTwo.userId,
     documentId: documentOne.documentId,
+    invitedById: userOne.userId,
   },
 })
 
@@ -132,24 +163,29 @@ await prisma.invite.upsert({
       documentId: documentOne.documentId,
     },
   },
-  update: { permission: 'READ' },
+  update: { permission: 'READ', invitedById: userOne.userId },
   create: {
     permission: 'READ',
     userId: userThree.userId,
     documentId: documentOne.documentId,
+    invitedById: userOne.userId,
   },
 })
 
 // RonSwanson can read Personal Thoughts
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userTwo.userId, documentId: documentTwo.documentId },
+    userId_documentId: {
+      userId: userTwo.userId,
+      documentId: documentTwo.documentId,
+    },
   },
-  update: { permission: 'READ' },
+  update: { permission: 'READ', invitedById: userOne.userId },
   create: {
     permission: 'READ',
     userId: userTwo.userId,
     documentId: documentTwo.documentId,
+    invitedById: userOne.userId,
   },
 })
 
@@ -161,51 +197,66 @@ await prisma.invite.upsert({
       documentId: documentThree.documentId,
     },
   },
-  update: { permission: 'WRITE' },
+  update: { permission: 'WRITE', invitedById: userOne.userId },
   create: {
     permission: 'WRITE',
     userId: userThree.userId,
     documentId: documentThree.documentId,
+    invitedById: userOne.userId,
   },
 })
 
-// TEST DOC
+// TEST DOC (created by RonSwanson)
 
-// ryanbibb
+// RonSwanson invites ryanbibb to read TEST DOC
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userOne.userId, documentId: testDoc.documentId },
+    userId_documentId: {
+      userId: userOne.userId,
+      documentId: testDoc.documentId,
+    },
   },
-  update: { permission: 'READ' },
+  update: { permission: 'READ', invitedById: userTwo.userId },
   create: {
     permission: 'READ',
     userId: userOne.userId,
     documentId: testDoc.documentId,
+    invitedById: userTwo.userId,
   },
 })
 
-// RonSwanson
+// RonSwanson invites echos-100 to write TEST DOC
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userTwo.userId, documentId: testDoc.documentId },
+    userId_documentId: {
+      userId: userThree.userId,
+      documentId: testDoc.documentId,
+    },
   },
-  update: { permission: 'READ' },
-  create: {
-    permission: 'READ',
-    userId: userTwo.userId,
-    documentId: testDoc.documentId,
-  },
-})
-
-// echos-100
-await prisma.invite.upsert({
-  where: {
-    userId_documentId: { userId: userThree.userId, documentId: testDoc.documentId },
-  },
-  update: { permission: 'WRITE' },
+  update: { permission: 'WRITE', invitedById: userTwo.userId },
   create: {
     permission: 'WRITE',
     userId: userThree.userId,
     documentId: testDoc.documentId,
+    invitedById: userTwo.userId,
+  },
+})
+
+// TEST DOC 2 (created by echos-100)
+
+// echos-100 invites ryanbibb to write TEST DOC 2
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: {
+      userId: userOne.userId,
+      documentId: testDocTwo.documentId,
+    },
+  },
+  update: { permission: 'WRITE', invitedById: userThree.userId },
+  create: {
+    permission: 'WRITE',
+    userId: userOne.userId,
+    documentId: testDocTwo.documentId,
+    invitedById: userThree.userId,
   },
 })

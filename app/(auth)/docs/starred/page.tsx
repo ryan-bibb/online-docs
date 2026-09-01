@@ -12,6 +12,9 @@ export default async function StarredPage() {
         <h1>Starred Documents</h1>
       </div>
       <div className="flex flex-row flex-wrap gap-5 p-5 w-full border-y">
+        {documents.length === 0 && (
+          <div>You currently have no starred documents</div>
+        )}
         {documents.map((document) => (
           <div key={document.documentId}>
             <DocCard

@@ -100,7 +100,6 @@ export function SettingsPage({
               <span className="text-sm">{userName}</span>
             </div>
             <Button
-              variant="outline"
               size="sm"
               onClick={() => {
                 setUserNameDraft(userName)
@@ -140,7 +139,6 @@ export function SettingsPage({
               <span className="text-sm">{email}</span>
             </div>
             <Button
-              variant="outline"
               size="sm"
               onClick={() => {
                 setEmailDraft(email)
@@ -181,7 +179,6 @@ export function SettingsPage({
               <span className="text-sm">{bio}</span>
             </div>
             <Button
-              variant="outline"
               size="sm"
               onClick={() => {
                 setBioDraft(bio)

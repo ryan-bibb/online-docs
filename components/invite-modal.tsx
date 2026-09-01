@@ -25,10 +25,12 @@ const PERMISSIONS: { value: PermissionType; label: string }[] = [
 ]
 
 export default function InviteModal({
+  userId,
   documentId,
   allUsers,
   invites,
 }: {
+  userId: User['userId']
   documentId: Document['documentId']
   allUsers: User[]
   invites: Invite[]
@@ -39,7 +41,7 @@ export default function InviteModal({
 
   return (
     <div>
-      <Button onClick={() => setOpen(true)}>Open modal</Button>
+      <Button onClick={() => setOpen(true)}>Invite</Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
@@ -54,8 +56,12 @@ export default function InviteModal({
           />
           <div className="-mx-4 flex max-h-80 flex-col divide-y divide-border overflow-y-auto border-t">
             {allUsers
-              .filter((user) =>
-                user.userName.toLowerCase().includes(searchName.toLowerCase()),
+              .filter(
+                (user) =>
+                  userId !== user.userId &&
+                  user.userName
+                    .toLowerCase()
+                    .includes(searchName.toLowerCase()),
               )
               .map((user) => {
                 const userInvite = invites.find(
