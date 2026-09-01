@@ -2,7 +2,6 @@ import { prisma } from '@/lib/prisma'
 import DocCard from '@/components/doc-card'
 import { getCurrentUser } from '@/lib/auth'
 
-// TODO: maybe add option choice to show creator of invite in card footer
 export default async function InvitesPage() {
   const user = await getCurrentUser()
 
