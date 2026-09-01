@@ -1,18 +1,33 @@
 import 'dotenv/config'
+import { randomBytes, scrypt } from 'crypto'
+import { promisify } from 'util'
 import { prisma } from '@/lib/prisma'
 
+const scryptAsync = promisify(scrypt)
+const KEY_LENGTH = 64
+
+// Mirrors lib/password.ts's hashPassword — duplicated here because that
+// module imports 'server-only', which this standalone script can't resolve.
+async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16).toString('hex')
+  const derivedKey = (await scryptAsync(password, salt, KEY_LENGTH)) as Buffer
+  return `${salt}:${derivedKey.toString('hex')}`
+}
+
 // USER SEEDS
+
+const seedPasswordHash = await hashPassword('password')
 
 // User One
 const userOne = await prisma.user.upsert({
   where: { userName: 'ryanbibb34' },
   update: {
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     bio: 'Hello, my name is Ryan Bibb and Im a dev',
   },
   create: {
     userName: 'ryanbibb34',
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     email: 'ryanbibb34@example.com',
     bio: 'Hello, my name is Ryan Bibb and Im a dev',
   },
@@ -24,12 +39,12 @@ const userTwo = await prisma.user.upsert({
     userName: 'RonSwanson',
   },
   update: {
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     bio: 'I am a generation hacker',
   },
   create: {
     userName: 'RonSwanson',
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     email: 'ronswanson@example.com',
     bio: 'I am a generation hacker',
   },
@@ -41,12 +56,12 @@ const userThree = await prisma.user.upsert({
     userName: 'echos-100',
   },
   update: {
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     bio: 'Im an alter ego (^.^)',
   },
   create: {
     userName: 'echos-100',
-    passwordHash: 'password',
+    passwordHash: seedPasswordHash,
     email: 'echos100@example.com',
     bio: 'Im an alter ego (^.^)',
   },
