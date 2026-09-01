@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Button } from '@base-ui/react'
+import { Button } from '@/components/ui/button'
 import { saveDocumentContent } from '@/app/(auth)/docs/actions'
 import type { Document } from '@/lib/generated/prisma/client'
 
@@ -41,11 +41,10 @@ const Tiptap = ({
 
   return (
     <div className="flex-col gap-3">
-      <div className="flex justify-center border rounded-sm p-4 w-20 ">
-        <Button onClick={handleSave} disabled={isPending}>
-          {isPending ? 'Saving...' : 'Save'}
-        </Button>
-      </div>
+      <Button onClick={handleSave} disabled={isPending}>
+        {isPending ? 'Saving...' : 'Save'}
+      </Button>
+
       <EditorContent editor={editor} />
     </div>
   )
