@@ -6,13 +6,17 @@ import { prisma } from '@/lib/prisma'
 const scryptAsync = promisify(scrypt)
 const KEY_LENGTH = 64
 
-// Mirrors lib/password.ts's hashPassword — duplicated here because that
-// module imports 'server-only', which this standalone script can't resolve.
 async function hashPassword(password: string): Promise<string> {
   const salt = randomBytes(16).toString('hex')
   const derivedKey = (await scryptAsync(password, salt, KEY_LENGTH)) as Buffer
   return `${salt}:${derivedKey.toString('hex')}`
 }
+
+// RESET
+
+await prisma.invite.deleteMany()
+await prisma.document.deleteMany()
+await prisma.user.deleteMany()
 
 // USER SEEDS
 
@@ -129,7 +133,10 @@ const testDoc = await prisma.document.create({
 // RonSwanson has no access to Short Story #3
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userTwo.userId, documentId: documentOne.documentId },
+    userId_documentId: {
+      userId: userTwo.userId,
+      documentId: documentOne.documentId,
+    },
   },
   update: { permission: 'NONE' },
   create: {
@@ -158,7 +165,10 @@ await prisma.invite.upsert({
 // RonSwanson can read Personal Thoughts
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userTwo.userId, documentId: documentTwo.documentId },
+    userId_documentId: {
+      userId: userTwo.userId,
+      documentId: documentTwo.documentId,
+    },
   },
   update: { permission: 'READ' },
   create: {
@@ -189,7 +199,10 @@ await prisma.invite.upsert({
 // ryanbibb
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userOne.userId, documentId: testDoc.documentId },
+    userId_documentId: {
+      userId: userOne.userId,
+      documentId: testDoc.documentId,
+    },
   },
   update: { permission: 'READ' },
   create: {
@@ -202,7 +215,10 @@ await prisma.invite.upsert({
 // RonSwanson
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userTwo.userId, documentId: testDoc.documentId },
+    userId_documentId: {
+      userId: userTwo.userId,
+      documentId: testDoc.documentId,
+    },
   },
   update: { permission: 'READ' },
   create: {
@@ -215,7 +231,10 @@ await prisma.invite.upsert({
 // echos-100
 await prisma.invite.upsert({
   where: {
-    userId_documentId: { userId: userThree.userId, documentId: testDoc.documentId },
+    userId_documentId: {
+      userId: userThree.userId,
+      documentId: testDoc.documentId,
+    },
   },
   update: { permission: 'WRITE' },
   create: {
