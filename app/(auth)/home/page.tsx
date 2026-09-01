@@ -16,7 +16,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col p-5">
       <div className="p-3">
-        <h1>Documents</h1>
+        <h1>Recent Documents</h1>
       </div>
       <div className="flex flex-row flex-wrap gap-5 p-5 w-full border-y">
         <DocCard title="Blank Doc" date={new Date()} />
