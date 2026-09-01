@@ -1,5 +1,8 @@
-import { FileText, Home, LogOut, Settings, Star } from 'lucide-react'
+'use client'
+
+import { FileText, Home, LogOut, Settings, Star, UserPlus } from 'lucide-react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   Sidebar,
   SidebarContent,
@@ -19,10 +22,13 @@ const navItems = [
   { title: 'Home', icon: Home, href: '/home' },
   { title: 'All Documents', icon: FileText, href: '/docs' },
   { title: 'Starred', icon: Star, href: '/docs/starred' },
+  { title: 'Invites', icon: UserPlus, href: '/docs/invites' },
 ]
 
 // TODO: maybe dont make this retractable. It would make styling in other components easier
 export function AppSidebar({ user }: { user: Pick<User, 'userName'> | null }) {
+  const pathname = usePathname()
+
   return (
     <Sidebar>
       <SidebarHeader>RLink Docs</SidebarHeader>
@@ -33,7 +39,10 @@ export function AppSidebar({ user }: { user: Pick<User, 'userName'> | null }) {
             <SidebarMenu>
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton render={<Link href={item.href} />}>
+                  <SidebarMenuButton
+                    isActive={pathname === item.href}
+                    render={<Link href={item.href} />}
+                  >
                     <item.icon />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
@@ -53,7 +62,10 @@ export function AppSidebar({ user }: { user: Pick<User, 'userName'> | null }) {
             </SidebarMenuItem>
           )}
           <SidebarMenuItem>
-            <SidebarMenuButton render={<Link href="/settings" />}>
+            <SidebarMenuButton
+              isActive={pathname === '/settings'}
+              render={<Link href="/settings" />}
+            >
               <Settings />
               <span>Settings</span>
             </SidebarMenuButton>
