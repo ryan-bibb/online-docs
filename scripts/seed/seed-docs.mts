@@ -55,7 +55,7 @@ const userThree = await prisma.user.upsert({
 // DOCUMENT SEEDS
 
 // Document One
-await prisma.document.create({
+const documentOne = await prisma.document.create({
   data: {
     title: 'Short Story #3',
     content:
@@ -65,7 +65,7 @@ await prisma.document.create({
 })
 
 // Document Two
-await prisma.document.create({
+const documentTwo = await prisma.document.create({
   data: {
     title: 'Personal Thoughts',
     content: 'Why is Python so slow and C++ so fast? Does anyone really know?',
@@ -74,7 +74,7 @@ await prisma.document.create({
 })
 
 // Document Three
-await prisma.document.create({
+const documentThree = await prisma.document.create({
   data: {
     title: 'Reading List',
     content:
@@ -98,5 +98,114 @@ await prisma.document.create({
     title: 'Book #1 Draft',
     content: 'Chapter 1: The Great Awakenings',
     creatorId: userOne.userId,
+  },
+})
+
+const testDoc = await prisma.document.create({
+  data: {
+    title: 'TEST DOC',
+    content: 'THIS IS A TEST DOC FOR INVITES',
+    creatorId: userOne.userId,
+  },
+})
+
+// INVITE SEEDS
+
+// RonSwanson has no access to Short Story #3
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: { userId: userTwo.userId, documentId: documentOne.documentId },
+  },
+  update: { permission: 'NONE' },
+  create: {
+    permission: 'NONE',
+    userId: userTwo.userId,
+    documentId: documentOne.documentId,
+  },
+})
+
+// echos-100 can read Short Story #3
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: {
+      userId: userThree.userId,
+      documentId: documentOne.documentId,
+    },
+  },
+  update: { permission: 'READ' },
+  create: {
+    permission: 'READ',
+    userId: userThree.userId,
+    documentId: documentOne.documentId,
+  },
+})
+
+// RonSwanson can read Personal Thoughts
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: { userId: userTwo.userId, documentId: documentTwo.documentId },
+  },
+  update: { permission: 'READ' },
+  create: {
+    permission: 'READ',
+    userId: userTwo.userId,
+    documentId: documentTwo.documentId,
+  },
+})
+
+// echos-100 can read and write Reading List
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: {
+      userId: userThree.userId,
+      documentId: documentThree.documentId,
+    },
+  },
+  update: { permission: 'WRITE' },
+  create: {
+    permission: 'WRITE',
+    userId: userThree.userId,
+    documentId: documentThree.documentId,
+  },
+})
+
+// TEST DOC
+
+// ryanbibb
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: { userId: userOne.userId, documentId: testDoc.documentId },
+  },
+  update: { permission: 'READ' },
+  create: {
+    permission: 'READ',
+    userId: userOne.userId,
+    documentId: testDoc.documentId,
+  },
+})
+
+// RonSwanson
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: { userId: userTwo.userId, documentId: testDoc.documentId },
+  },
+  update: { permission: 'READ' },
+  create: {
+    permission: 'READ',
+    userId: userTwo.userId,
+    documentId: testDoc.documentId,
+  },
+})
+
+// echos-100
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: { userId: userThree.userId, documentId: testDoc.documentId },
+  },
+  update: { permission: 'WRITE' },
+  create: {
+    permission: 'WRITE',
+    userId: userThree.userId,
+    documentId: testDoc.documentId,
   },
 })

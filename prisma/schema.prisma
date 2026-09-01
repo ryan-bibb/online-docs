@@ -22,6 +22,8 @@ model Invite {
 
   user          User      @relation(fields: [userId], references: [userId])
   document      Document  @relation(fields: [documentId], references: [documentId])
+
+  @@unique([userId, documentId])
 }
 
 // TODO: add email so eventually can wire up emailing docs to users
@@ -35,7 +37,6 @@ model User {
   bio           String      @db.VarChar(200) // max 200 characters long
   createdAt     DateTime    @default(now())
 
-  documents     Document[] @relation("DocumentCollaborators")
   createdDocs   Document[] @relation("DocumentCreator")
   invites       Invite[]
   // friends?
@@ -55,6 +56,5 @@ model Document {
 
   creatorId  String
   creator    User       @relation("DocumentCreator", fields: [creatorId], references: [userId])
-  users      User[]     @relation("DocumentCollaborators")
   invites    Invite[]
 }

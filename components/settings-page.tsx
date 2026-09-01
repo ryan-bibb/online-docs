@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,7 +14,7 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-} from './ui/card'
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -50,7 +50,8 @@ export function SettingsPage({
   const [bioDraft, setBioDraft] = useState(bio)
   const [savingBio, setSavingBio] = useState(false)
 
-  async function saveUserName() {
+  async function saveUserName(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setSavingUserName(true)
     const result = await updateUserName({ userId, userName: userNameDraft })
     setSavingUserName(false)
@@ -60,7 +61,8 @@ export function SettingsPage({
     }
   }
 
-  async function saveEmail() {
+  async function saveEmail(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setSavingEmail(true)
     const result = await updateEmail({ userId, email: emailDraft })
     setSavingEmail(false)
@@ -70,7 +72,8 @@ export function SettingsPage({
     }
   }
 
-  async function saveBio() {
+  async function saveBio(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setSavingBio(true)
     const result = await updateBio({ userId, bio: bioDraft })
     setSavingBio(false)
@@ -112,17 +115,19 @@ export function SettingsPage({
               <DialogHeader>
                 <DialogTitle>Update username</DialogTitle>
               </DialogHeader>
-              <Input
-                value={userNameDraft}
-                onChange={(e) => setUserNameDraft(e.target.value)}
-                placeholder={userName}
-                autoFocus
-              />
-              <DialogFooter showCloseButton>
-                <Button disabled={savingUserName} onClick={saveUserName}>
-                  Save
-                </Button>
-              </DialogFooter>
+              <form className="flex flex-col gap-4" onSubmit={saveUserName}>
+                <Input
+                  value={userNameDraft}
+                  onChange={(e) => setUserNameDraft(e.target.value)}
+                  placeholder={userName}
+                  autoFocus
+                />
+                <DialogFooter showCloseButton>
+                  <Button type="submit" disabled={savingUserName}>
+                    Save
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
 
@@ -150,18 +155,20 @@ export function SettingsPage({
               <DialogHeader>
                 <DialogTitle>Update email</DialogTitle>
               </DialogHeader>
-              <Input
-                type="email"
-                value={emailDraft}
-                onChange={(e) => setEmailDraft(e.target.value)}
-                placeholder={email}
-                autoFocus
-              />
-              <DialogFooter showCloseButton>
-                <Button disabled={savingEmail} onClick={saveEmail}>
-                  Save
-                </Button>
-              </DialogFooter>
+              <form className="flex flex-col gap-4" onSubmit={saveEmail}>
+                <Input
+                  type="email"
+                  value={emailDraft}
+                  onChange={(e) => setEmailDraft(e.target.value)}
+                  placeholder={email}
+                  autoFocus
+                />
+                <DialogFooter showCloseButton>
+                  <Button type="submit" disabled={savingEmail}>
+                    Save
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
 
@@ -189,17 +196,19 @@ export function SettingsPage({
               <DialogHeader>
                 <DialogTitle>Update bio</DialogTitle>
               </DialogHeader>
-              <Input
-                value={bioDraft}
-                onChange={(e) => setBioDraft(e.target.value)}
-                placeholder={bio}
-                autoFocus
-              />
-              <DialogFooter showCloseButton>
-                <Button disabled={savingBio} onClick={saveBio}>
-                  Save
-                </Button>
-              </DialogFooter>
+              <form className="flex flex-col gap-4" onSubmit={saveBio}>
+                <Input
+                  value={bioDraft}
+                  onChange={(e) => setBioDraft(e.target.value)}
+                  placeholder={bio}
+                  autoFocus
+                />
+                <DialogFooter showCloseButton>
+                  <Button type="submit" disabled={savingBio}>
+                    Save
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         </CardContent>

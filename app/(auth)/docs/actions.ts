@@ -1,10 +1,14 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import { Document, User } from '@/lib/generated/prisma/client'
+import {
+  Document,
+  User,
+  Invite,
+  PermissionType,
+} from '@/lib/generated/prisma/client'
 import { successResult, errorResult } from '@/lib/utils/action-result'
 import { verifySession } from '@/lib/auth'
-import { error } from 'console'
 
 export async function createDocument({
   title,
@@ -30,6 +34,7 @@ export async function createDocument({
   return successResult({ message: 'Document created', data: document })
 }
 
+// USER SECTION
 export async function updateUserName({
   userId,
   userName,
@@ -79,6 +84,7 @@ export async function updateBio({
   return successResult({ message: 'Bio updated', data: user })
 }
 
+// DOCUMENT SECTION
 export async function saveDocumentContent({
   docId,
   content,
@@ -109,4 +115,26 @@ export async function togglePinned({
 
   if (!document) return errorResult({ message: 'Error pinning document' })
   return successResult({ message: 'Document pinned', data: document })
+}
+
+// INVITE SECTION
+
+// TODO: fix these functiosn
+
+export async function upsertPermission({
+  userId,
+  documentId,
+  permission,
+}: {
+  userId: User['userId']
+  documentId: Document['documentId']
+  permission: PermissionType
+}) {
+  const invite = await prisma.invite.upsert({
+    where: { userId_documentId: { userId, documentId } },
+    update: { permission },
+    create: { userId, documentId, permission },
+  })
+  if (!invite) return errorResult({ message: 'Error updating permission' })
+  return successResult({ message: 'Permission updated', data: invite })
 }
