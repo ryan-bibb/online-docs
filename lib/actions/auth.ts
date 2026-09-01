@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { hashPassword, verifyPassword } from '@/lib/password'
 import { createSession, deleteSession } from '@/lib/session'
+import { isValidEmail } from '@/lib/utils/email'
 
 export type AuthFormState =
   | {
@@ -42,7 +43,7 @@ export async function signup(_prevState: AuthFormState, formData: FormData): Pro
 
   const errors = validateCredentials(userName, password) ?? {}
 
-  if (typeof email !== 'string' || !email.includes('@')) {
+  if (typeof email !== 'string' || !isValidEmail(email)) {
     errors.email = ['Please enter a valid email.']
   }
 

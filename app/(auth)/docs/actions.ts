@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { Document, User, PermissionType } from '@/lib/generated/prisma/client'
 import { successResult, errorResult } from '@/lib/utils/action-result'
 import { verifySession } from '@/lib/auth'
+import { isValidEmail } from '@/lib/utils/email'
 
 // TODO: organize these into repositories
 
@@ -68,6 +69,9 @@ export async function updateEmail({
   const session = await verifySession()
   if (session.userId !== userId)
     return errorResult({ message: 'You can only update your own account' })
+
+  if (!isValidEmail(email))
+    return errorResult({ message: 'Please enter a valid email', status: 400 })
 
   const user = await prisma.user.update({ where: { userId }, data: { email } })
 
