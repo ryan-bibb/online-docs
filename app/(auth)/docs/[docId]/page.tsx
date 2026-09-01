@@ -2,6 +2,7 @@ import {
   Card,
   CardAction,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -10,6 +11,7 @@ import StarButton from '@/components/star-button'
 import Tiptap from '@/components/tiptap'
 import InviteModal from '@/components/invite-modal'
 import { getCurrentUser } from '@/lib/auth'
+import { getFullDateAndTime } from '@/lib/utils/date'
 
 export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
   const { docId } = await params
@@ -37,11 +39,14 @@ export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
       ?.permission === 'READ'
 
   return (
-    <div className="flex-1 p-4">
-      <Card className="h-full w-full">
-        <CardHeader>
-          <CardTitle>{document.title}</CardTitle>
-          <CardAction>
+    <div className="flex-1 p-4 md:p-6">
+      <Card className="mx-auto h-full w-full max-w-4xl">
+        <CardHeader className="border-b">
+          <CardTitle className="text-xl">{document.title}</CardTitle>
+          <CardDescription>
+            Last edited {getFullDateAndTime(document.updatedAt)}
+          </CardDescription>
+          <CardAction className="flex items-center gap-2">
             {document.creatorId === user.userId && (
               <InviteModal
                 documentId={document.documentId}
