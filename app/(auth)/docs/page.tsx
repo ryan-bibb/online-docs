@@ -19,6 +19,9 @@ export default async function Home() {
         <h1>All Documents</h1>
       </div>
       <div className="flex flex-row flex-wrap gap-5 p-5 w-full border-y">
+        {recentDocuments.length === 0 && (
+          <div>You currently have no documents</div>
+        )}
         {recentDocuments.map((document) => (
           <div key={document.documentId}>
             <DocCard
