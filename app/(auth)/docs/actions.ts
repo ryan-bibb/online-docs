@@ -130,6 +130,10 @@ export async function upsertPermission({
   documentId: Document['documentId']
   permission: PermissionType
 }) {
+  const session = await verifySession()
+  if (session.userId === userId)
+    return errorResult({ message: 'You cannot change your own permission' })
+
   const invite = await prisma.invite.upsert({
     where: { userId_documentId: { userId, documentId } },
     update: { permission },

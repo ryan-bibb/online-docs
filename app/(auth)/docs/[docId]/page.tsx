@@ -9,9 +9,14 @@ import { prisma } from '@/lib/prisma'
 import StarButton from '@/components/star-button'
 import Tiptap from '@/components/tiptap'
 import InviteModal from '@/components/invite-modal'
+import { getCurrentUser } from '@/lib/auth'
 
 export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
   const { docId } = await params
+  const user = await getCurrentUser()
+
+  if (!user) return
+
   const document = await prisma.document.findUnique({
     where: { documentId: docId },
     include: {
@@ -33,6 +38,7 @@ export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
               documentId={document.documentId}
               allUsers={users}
               invites={document.invites}
+              userId={user.userId}
             />
             <StarButton docId={docId} defaultPinn={document.isPinned} />
           </CardAction>
