@@ -1,14 +1,15 @@
 'use server'
 
 import { prisma } from '@/lib/prisma'
-import {
-  Document,
-  User,
-  Invite,
-  PermissionType,
-} from '@/lib/generated/prisma/client'
+import { Document, User, PermissionType } from '@/lib/generated/prisma/client'
 import { successResult, errorResult } from '@/lib/utils/action-result'
 import { verifySession } from '@/lib/auth'
+
+// TODO: organize these into repositories
+
+export async function getUserName(userId: User['userId']) {
+  return (await prisma.user.findUnique({ where: { userId } }))?.userName
+}
 
 export async function createDocument({
   title,
