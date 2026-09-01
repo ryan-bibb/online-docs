@@ -28,6 +28,14 @@ export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
 
   const users = await prisma.user.findMany({ where: {} })
 
+  const canWrite =
+    document.creatorId === user.userId ||
+    document.invites.find((invite) => invite.userId === user.userId)
+      ?.permission === 'WRITE'
+  const canRead =
+    document.invites.find((invite) => invite.userId === user.userId)
+      ?.permission === 'READ'
+
   return (
     <div className="flex-1 p-4">
       <Card className="h-full w-full">
@@ -46,8 +54,13 @@ export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-sm">
-            <Tiptap docId={document.documentId} content={document.content} />
+          <div className="overflow-hidden rounded-lg border">
+            <Tiptap
+              docId={document.documentId}
+              content={document.content}
+              canWrite={canWrite}
+              canRead={canRead}
+            />
           </div>
         </CardContent>
       </Card>

@@ -99,8 +99,13 @@ export async function updateBio({
 }
 
 // DOCUMENT SECTION
-async function canWriteDocument(userId: User['userId'], docId: Document['documentId']) {
-  const document = await prisma.document.findUnique({ where: { documentId: docId } })
+async function canWriteDocument(
+  userId: User['userId'],
+  docId: Document['documentId'],
+) {
+  const document = await prisma.document.findUnique({
+    where: { documentId: docId },
+  })
   if (!document) return false
   if (document.creatorId === userId) return true
 
@@ -119,7 +124,9 @@ export async function saveDocumentContent({
 }) {
   const session = await verifySession()
   if (!(await canWriteDocument(session.userId, docId)))
-    return errorResult({ message: 'You do not have write access to this document' })
+    return errorResult({
+      message: 'You do not have write access to this document',
+    })
 
   const document = await prisma.document.update({
     where: { documentId: docId },
@@ -150,9 +157,37 @@ export async function togglePinned({
   return successResult({ message: 'Document pinned', data: document })
 }
 
+export async function getDocumentOwner({
+  documentId,
+}: {
+  documentId: Document['documentId']
+}) {
+  const document = await prisma.document.findUnique({ where: { documentId } })
+
+  if (!document) return errorResult({ message: 'Error finding document owner' })
+
+  return document.creatorId
+}
+
 // INVITE SECTION
 
 // TODO: fix these functiosn
+
+export async function getPermission({
+  userId,
+  documentId,
+}: {
+  userId: User['userId']
+  documentId: Document['documentId']
+}) {
+  const invite = await prisma.invite.findUnique({
+    where: { userId_documentId: { userId, documentId } },
+  })
+
+  if (!invite)
+    return errorResult({ message: 'Error finding invite permission' })
+  return invite.permission
+}
 
 export async function upsertPermission({
   userId,
