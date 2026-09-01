@@ -1,10 +1,15 @@
 import DocCard from '@/components/doc-card'
 import { prisma } from '@/lib/prisma'
+import { getCurrentUser } from '@/lib/auth'
 
 export default async function Home() {
-  // TODO: maybe move to an API route?
+  const user = await getCurrentUser()
+
+  if (!user) return
+
   const recentDocuments = await prisma.document.findMany({
     orderBy: { createdAt: 'desc' },
+    where: { creatorId: user.userId },
     take: 5,
   })
 

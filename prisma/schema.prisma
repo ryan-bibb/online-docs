@@ -19,14 +19,15 @@ model Invite {
 
   userId        String
   documentId    String
+  invitedById   String
 
   user          User      @relation(fields: [userId], references: [userId])
   document      Document  @relation(fields: [documentId], references: [documentId])
+  invitedBy     User      @relation("InviteSender", fields: [invitedById], references: [userId])
 
   @@unique([userId, documentId])
 }
 
-// TODO: add email so eventually can wire up emailing docs to users
 model User {
   userId       String      @id @default(cuid())
 
@@ -39,6 +40,7 @@ model User {
 
   createdDocs   Document[] @relation("DocumentCreator")
   invites       Invite[]
+  sentInvites   Invite[]   @relation("InviteSender")
   // friends?
 }
 

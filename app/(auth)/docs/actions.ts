@@ -8,6 +8,7 @@ import { verifySession } from '@/lib/auth'
 // TODO: organize these into repositories
 
 export async function getUserName(userId: User['userId']) {
+  await verifySession()
   return (await prisma.user.findUnique({ where: { userId } }))?.userName
 }
 
@@ -44,6 +45,10 @@ export async function updateUserName({
   userName: User['userName']
 }) {
   // TODO: make sure username is unique -> find a way to implement that before they hit update
+  const session = await verifySession()
+  if (session.userId !== userId)
+    return errorResult({ message: 'You can only update your own account' })
+
   const user = await prisma.user.update({
     where: { userId },
     data: { userName },
@@ -60,6 +65,10 @@ export async function updateEmail({
   userId: User['userId']
   email: string
 }) {
+  const session = await verifySession()
+  if (session.userId !== userId)
+    return errorResult({ message: 'You can only update your own account' })
+
   const user = await prisma.user.update({ where: { userId }, data: { email } })
 
   if (!user) return errorResult({ message: 'Error updating email' })
@@ -73,6 +82,10 @@ export async function updateBio({
   userId: User['userId']
   bio: string
 }) {
+  const session = await verifySession()
+  if (session.userId !== userId)
+    return errorResult({ message: 'You can only update your own account' })
+
   // TODO: change default status code here?
   if (bio.length > 200)
     return errorResult({
@@ -86,6 +99,17 @@ export async function updateBio({
 }
 
 // DOCUMENT SECTION
+async function canWriteDocument(userId: User['userId'], docId: Document['documentId']) {
+  const document = await prisma.document.findUnique({ where: { documentId: docId } })
+  if (!document) return false
+  if (document.creatorId === userId) return true
+
+  const invite = await prisma.invite.findUnique({
+    where: { userId_documentId: { userId, documentId: docId } },
+  })
+  return invite?.permission === 'WRITE'
+}
+
 export async function saveDocumentContent({
   docId,
   content,
@@ -93,6 +117,10 @@ export async function saveDocumentContent({
   docId: Document['documentId']
   content: string
 }) {
+  const session = await verifySession()
+  if (!(await canWriteDocument(session.userId, docId)))
+    return errorResult({ message: 'You do not have write access to this document' })
+
   const document = await prisma.document.update({
     where: { documentId: docId },
     data: { content },
@@ -109,6 +137,10 @@ export async function togglePinned({
   docId: Document['documentId']
   pinned: boolean
 }) {
+  const session = await verifySession()
+  if (!(await canWriteDocument(session.userId, docId)))
+    return errorResult({ message: 'You do not have access to this document' })
+
   const document = await prisma.document.update({
     where: { documentId: docId },
     data: { isPinned: pinned },
@@ -135,10 +167,14 @@ export async function upsertPermission({
   if (session.userId === userId)
     return errorResult({ message: 'You cannot change your own permission' })
 
+  const document = await prisma.document.findUnique({ where: { documentId } })
+  if (!document || document.creatorId !== session.userId)
+    return errorResult({ message: 'Only the document owner can invite users' })
+
   const invite = await prisma.invite.upsert({
     where: { userId_documentId: { userId, documentId } },
-    update: { permission },
-    create: { userId, documentId, permission },
+    update: { permission, invitedById: session.userId },
+    create: { userId, documentId, permission, invitedById: session.userId },
   })
   if (!invite) return errorResult({ message: 'Error updating permission' })
   return successResult({ message: 'Permission updated', data: invite })

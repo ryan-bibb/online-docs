@@ -124,7 +124,15 @@ const testDoc = await prisma.document.create({
   data: {
     title: 'TEST DOC',
     content: 'THIS IS A TEST DOC FOR INVITES',
-    creatorId: userOne.userId,
+    creatorId: userTwo.userId,
+  },
+})
+
+const testDocTwo = await prisma.document.create({
+  data: {
+    title: 'TEST DOC 2',
+    content: 'THIS IS A SECOND TEST DOC FOR INVITES',
+    creatorId: userThree.userId,
   },
 })
 
@@ -138,11 +146,12 @@ await prisma.invite.upsert({
       documentId: documentOne.documentId,
     },
   },
-  update: { permission: 'NONE' },
+  update: { permission: 'NONE', invitedById: userOne.userId },
   create: {
     permission: 'NONE',
     userId: userTwo.userId,
     documentId: documentOne.documentId,
+    invitedById: userOne.userId,
   },
 })
 
@@ -154,11 +163,12 @@ await prisma.invite.upsert({
       documentId: documentOne.documentId,
     },
   },
-  update: { permission: 'READ' },
+  update: { permission: 'READ', invitedById: userOne.userId },
   create: {
     permission: 'READ',
     userId: userThree.userId,
     documentId: documentOne.documentId,
+    invitedById: userOne.userId,
   },
 })
 
@@ -170,11 +180,12 @@ await prisma.invite.upsert({
       documentId: documentTwo.documentId,
     },
   },
-  update: { permission: 'READ' },
+  update: { permission: 'READ', invitedById: userOne.userId },
   create: {
     permission: 'READ',
     userId: userTwo.userId,
     documentId: documentTwo.documentId,
+    invitedById: userOne.userId,
   },
 })
 
@@ -186,17 +197,18 @@ await prisma.invite.upsert({
       documentId: documentThree.documentId,
     },
   },
-  update: { permission: 'WRITE' },
+  update: { permission: 'WRITE', invitedById: userOne.userId },
   create: {
     permission: 'WRITE',
     userId: userThree.userId,
     documentId: documentThree.documentId,
+    invitedById: userOne.userId,
   },
 })
 
-// TEST DOC
+// TEST DOC (created by RonSwanson)
 
-// ryanbibb
+// RonSwanson invites ryanbibb to read TEST DOC
 await prisma.invite.upsert({
   where: {
     userId_documentId: {
@@ -204,31 +216,16 @@ await prisma.invite.upsert({
       documentId: testDoc.documentId,
     },
   },
-  update: { permission: 'READ' },
+  update: { permission: 'READ', invitedById: userTwo.userId },
   create: {
     permission: 'READ',
     userId: userOne.userId,
     documentId: testDoc.documentId,
+    invitedById: userTwo.userId,
   },
 })
 
-// RonSwanson
-await prisma.invite.upsert({
-  where: {
-    userId_documentId: {
-      userId: userTwo.userId,
-      documentId: testDoc.documentId,
-    },
-  },
-  update: { permission: 'READ' },
-  create: {
-    permission: 'READ',
-    userId: userTwo.userId,
-    documentId: testDoc.documentId,
-  },
-})
-
-// echos-100
+// RonSwanson invites echos-100 to write TEST DOC
 await prisma.invite.upsert({
   where: {
     userId_documentId: {
@@ -236,10 +233,30 @@ await prisma.invite.upsert({
       documentId: testDoc.documentId,
     },
   },
-  update: { permission: 'WRITE' },
+  update: { permission: 'WRITE', invitedById: userTwo.userId },
   create: {
     permission: 'WRITE',
     userId: userThree.userId,
     documentId: testDoc.documentId,
+    invitedById: userTwo.userId,
+  },
+})
+
+// TEST DOC 2 (created by echos-100)
+
+// echos-100 invites ryanbibb to write TEST DOC 2
+await prisma.invite.upsert({
+  where: {
+    userId_documentId: {
+      userId: userOne.userId,
+      documentId: testDocTwo.documentId,
+    },
+  },
+  update: { permission: 'WRITE', invitedById: userThree.userId },
+  create: {
+    permission: 'WRITE',
+    userId: userOne.userId,
+    documentId: testDocTwo.documentId,
+    invitedById: userThree.userId,
   },
 })

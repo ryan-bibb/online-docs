@@ -41,7 +41,7 @@ export default function InviteModal({
 
   return (
     <div>
-      <Button onClick={() => setOpen(true)}>Open modal</Button>
+      <Button onClick={() => setOpen(true)}>Invite</Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">

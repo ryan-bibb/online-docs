@@ -34,12 +34,14 @@ export default async function DocPage({ params }: PageProps<'/docs/[docId]'>) {
         <CardHeader>
           <CardTitle>{document.title}</CardTitle>
           <CardAction>
-            <InviteModal
-              documentId={document.documentId}
-              allUsers={users}
-              invites={document.invites}
-              userId={user.userId}
-            />
+            {document.creatorId === user.userId && (
+              <InviteModal
+                documentId={document.documentId}
+                allUsers={users}
+                invites={document.invites}
+                userId={user.userId}
+              />
+            )}
             <StarButton docId={docId} defaultPinn={document.isPinned} />
           </CardAction>
         </CardHeader>
