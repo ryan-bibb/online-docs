@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../lib/generated/prisma"
@@ -21,12 +16,14 @@ enum PermissionType {
 model Invite {
   id            String     @id @default(cuid())
   permission    PermissionType
-  
+
   userId        String
   documentId    String
 
   user          User      @relation(fields: [userId], references: [userId])
   document      Document  @relation(fields: [documentId], references: [documentId])
+
+  @@unique([userId, documentId])
 }
 
 // TODO: add email so eventually can wire up emailing docs to users
@@ -40,7 +37,6 @@ model User {
   bio           String      @db.VarChar(200) // max 200 characters long
   createdAt     DateTime    @default(now())
 
-  documents     Document[] @relation("DocumentCollaborators")
   createdDocs   Document[] @relation("DocumentCreator")
   invites       Invite[]
   // friends?
@@ -60,6 +56,5 @@ model Document {
 
   creatorId  String
   creator    User       @relation("DocumentCreator", fields: [creatorId], references: [userId])
-  users      User[]     @relation("DocumentCollaborators")
   invites    Invite[]
 }
